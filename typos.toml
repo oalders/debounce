@@ -1,0 +1,8 @@
+[default.extend-words]
+abd = "abd"
+sur = "sur"
+decorder = "decorder"
+importas = "importas"
+
+[files]
+extend-exclude = []

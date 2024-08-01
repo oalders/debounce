@@ -1,0 +1,71 @@
+package run
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
+
+	"github.com/oalders/debounce/age"
+	"github.com/oalders/debounce/touch"
+	"github.com/oalders/debounce/types"
+)
+
+func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
+	command := args.Command[0]
+	arguments := args.Command[1:]
+	if command == "bash -c" {
+		command = "bash"
+		arguments = append([]string{"-c"}, arguments...)
+	}
+	// cmdName is r.Params joined by spaces
+	cmdName := strings.Join(args.Command, "-")
+	cmdName = strings.ReplaceAll(cmdName, "/", "-")
+
+	cacheDir := filepath.Join(".cache", "debounce")
+	err := MaybeMakeCacheDir(home, cacheDir)
+	if err != nil {
+		return false, []byte{}, err
+	}
+
+	fileName := filepath.Join(home, cacheDir, cmdName)
+	if args.Debug {
+		fmt.Printf("Looking for debounce file \"%s\"\n", fileName)
+	}
+
+	tooSoon, err := age.Compare(fileName, args.Quantity, args.Unit)
+	if err != nil {
+		return false, []byte{}, errors.Join(errors.New(`checking last modified time`), err)
+	}
+	if tooSoon {
+		fmt.Printf("will not run this command more than once every %s %s\n", args.Quantity, args.Unit)
+		return true, []byte{}, nil
+	}
+	// This is just like running any other user command, so assume user has
+	// already sanitized inputs.
+	cmd := exec.Command(command, arguments...)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return false, output, errors.Join(errors.New("run command"), err)
+	}
+	err = touch.Touch(fileName)
+	if err != nil {
+		return false, output, errors.Join(errors.New("touch"), err)
+	}
+	return true, output, nil
+}
+
+func MaybeMakeCacheDir(parent, cache string) error {
+	fullPath := filepath.Join(parent, cache)
+	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+		err = os.MkdirAll(fullPath, 0o755)
+		if err != nil {
+			return errors.Join(errors.New("make cache dir"), err)
+		}
+	}
+
+	return nil
+}

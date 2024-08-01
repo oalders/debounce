@@ -1,0 +1,98 @@
+---
+name: test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22.4
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Test
+        run: go test -race -coverprofile=coverage.out -covermode=atomic -v ./...
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build binary
+        run: go build .
+
+      - name: Install bats
+        run: npm install -g bats
+
+      - name: bats test
+        run: echo $PWD && ls && bats test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22.4
+
+      - name: Build
+        run: go build -v ./... && mv debounce test/
+
+      - name: Install executables required for testing
+        run: brew install tmux
+
+      - name: Test
+        run: go test -race -coverprofile=coverage.out -covermode=atomic -v ./...
+
+      - name: Install bats
+        run: npm install -g bats
+
+      - name: bats test
+        run: bats test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+  precious:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22.4
+
+      - name: install gofumpt
+        run: go install mvdan.cc/gofumpt@latest
+      - name: install golangci-lint
+        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin latest
+
+      - name: Build
+        run: go build -v ./...
+
+      - run: env | sort
+      - name: mkdir
+        run: mkdir -p ~/.local/bin
+      - name: Install ubi
+        run: curl --silent --location https://raw.githubusercontent.com/houseabsolute/ubi/master/bootstrap/bootstrap-ubi.sh | TARGET=~/.local/bin sh
+      - name: Install omegasort
+        run: ubi --project houseabsolute/omegasort --in ~/.local/bin
+      - name: Install precious
+        run: ubi --project houseabsolute/precious --in ~/.local/bin
+      - name: Run precious
+        run: precious lint --all
