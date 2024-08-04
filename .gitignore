@@ -1,4 +1,4 @@
 c.out
 coverage.out
-debounce
 dist/
+bin/debounce

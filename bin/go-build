@@ -1,0 +1,4 @@
+#!/bin/bash
+
+set -eux -o pipefail
+go build -o bin/debounce

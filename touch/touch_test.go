@@ -3,6 +3,7 @@ package touch_test
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/oalders/debounce/touch"
 	"github.com/stretchr/testify/assert"
@@ -15,19 +16,16 @@ func TestTouch(t *testing.T) {
 	tempFile, err := os.CreateTemp("", "test")
 	assert.NoError(t, err)
 	defer os.Remove(tempFile.Name())
-
-	fileInfo, err := tempFile.Stat()
+	before, err := tempFile.Stat()
 	assert.NoError(t, err)
-	lastModTime := fileInfo.ModTime()
 
-	// Call touch on the temporary file
+	time.Sleep(1 * time.Second)
 	err = touch.Touch(tempFile.Name())
 	assert.NoError(t, err)
 
-	// Check if the last modification time of the file has been updated
-	fileInfo, err = tempFile.Stat()
+	after, err := tempFile.Stat()
 	assert.NoError(t, err)
-	assert.True(t, fileInfo.ModTime().After(lastModTime))
+	assert.True(t, after.ModTime().After(before.ModTime()))
 
 	// Call touch on a non-existent file
 	nonExistentFile := tempFile.Name() + "nonexistent"
