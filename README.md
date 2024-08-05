@@ -1,7 +1,7 @@
 # debounce
 
 <p align="center">
-  <img src="logo.png" />
+  <img src="logo.jpeg" />
 </p>
 
 ## Introduction
