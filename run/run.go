@@ -22,6 +22,7 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 	}
 	// cmdName is r.Params joined by spaces
 	cmdName := strings.Join(args.Command, "-")
+	prettyName := strings.Join(args.Command, " ")
 	cmdName = strings.ReplaceAll(cmdName, "/", "-")
 
 	cacheDir := filepath.Join(".cache", "debounce")
@@ -40,7 +41,7 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 		return false, []byte{}, errors.Join(errors.New(`checking last modified time`), err)
 	}
 	if tooSoon {
-		fmt.Printf("will not run this command more than once every %s %s\n", args.Quantity, args.Unit)
+		fmt.Printf("🚥 will not run \"%s\" more than once every %s %s\n", prettyName, args.Quantity, args.Unit)
 		return true, []byte{}, nil
 	}
 	// This is just like running any other user command, so assume user has
