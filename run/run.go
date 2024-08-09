@@ -16,14 +16,10 @@ import (
 func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 	command := args.Command[0]
 	arguments := args.Command[1:]
-	if command == "bash -c" {
-		command = "bash"
-		arguments = append([]string{"-c"}, arguments...)
-	}
-	// cmdName is r.Params joined by spaces
-	cmdName := strings.Join(args.Command, "-")
+
 	prettyName := strings.Join(args.Command, " ")
-	cmdName = strings.ReplaceAll(cmdName, "/", "-")
+
+	cmdName := GenerateCmdName(args.Command)
 
 	cacheDir := filepath.Join(".cache", "debounce")
 	err := MaybeMakeCacheDir(home, cacheDir)
@@ -41,11 +37,17 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 		return false, []byte{}, errors.Join(errors.New(`checking last modified time`), err)
 	}
 	if tooSoon {
-		fmt.Printf("🚥 will not run \"%s\" more than once every %s %s\n", prettyName, args.Quantity, args.Unit)
+		fmt.Printf(
+			"🚥 will not run \"%s\" more than once every %s %s\n",
+			prettyName,
+			args.Quantity,
+			args.Unit,
+		)
 		return true, []byte{}, nil
 	}
 	// This is just like running any other user command, so assume user has
 	// already sanitized inputs.
+	fmt.Printf("Running command: %s %s\n", command, strings.Join(arguments, " "))
 	cmd := exec.Command(command, arguments...)
 
 	output, err := cmd.CombinedOutput()
@@ -69,4 +71,11 @@ func MaybeMakeCacheDir(parent, cache string) error {
 	}
 
 	return nil
+}
+
+func GenerateCmdName(args []string) string {
+	cmdName := strings.Join(args, "-")
+	cmdName = strings.ReplaceAll(cmdName, "/", "-")
+	cmdName = strings.ReplaceAll(cmdName, " ", "-")
+	return cmdName
 }

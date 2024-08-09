@@ -7,6 +7,7 @@ import (
 
 	"github.com/oalders/debounce/run"
 	"github.com/oalders/debounce/types"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRun(t *testing.T) {
@@ -52,11 +53,46 @@ func TestEnsureDir(t *testing.T) {
 	dirName := "testDir"
 
 	err = run.MaybeMakeCacheDir(tempDir, dirName)
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
+	assert.NoError(t, err, "first attempt to make dir")
 
 	if _, err := os.Stat(path.Join(tempDir, dirName)); os.IsNotExist(err) {
 		t.Errorf("Expected directory to exist at %s", dirName)
+	}
+
+	err = run.MaybeMakeCacheDir(tempDir, dirName)
+	assert.NoError(t, err, "command is idempotent")
+}
+
+func TestGenerateCmdName(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name string
+		want string
+		args []string
+	}{
+		{
+			name: "No special characters",
+			args: []string{"arg1", "arg2", "arg3"},
+			want: "arg1-arg2-arg3",
+		},
+		{
+			name: "Contains slash",
+			args: []string{"arg/1", "arg2", "arg3"},
+			want: "arg-1-arg2-arg3",
+		},
+		{
+			name: "Contains space",
+			args: []string{"arg 1", "arg2", "arg3"},
+			want: "arg-1-arg2-arg3",
+		},
+		{
+			name: "Contains slash and space",
+			args: []string{"arg/1", "arg 2", "arg3"},
+			want: "arg-1-arg-2-arg3",
+		},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, run.GenerateCmdName(tt.args))
 	}
 }
