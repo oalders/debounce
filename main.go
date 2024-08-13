@@ -15,7 +15,7 @@ func main() {
 	version := flag.Bool("version", false, "Print version to screen")
 	flag.Parse()
 	if *version {
-		fmt.Println("Version: 0.1.0")
+		fmt.Println("debounce 0.1.0")
 		os.Exit(0)
 	}
 
