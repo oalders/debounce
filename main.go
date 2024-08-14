@@ -22,7 +22,10 @@ func main() {
 	args := os.Args[1:]
 
 	if len(args) < 3 {
-		fmt.Println("Please provide the quantity, unit, and command")
+		fmt.Println(`Usage: debounce <integer> <hours|minutes|seconds> <command>
+eg: debounce 2 hours date
+eg: debounce 10 minutes zsh -c 'echo $PWD'
+eg: debounce 5 seconds bash -c 'sleep 2 && date'`)
 		os.Exit(1)
 	}
 
