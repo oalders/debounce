@@ -25,7 +25,6 @@ linters:
     - exhaustive
     # - exhaustivestruct
     # - exhaustruct
-    - exportloopref
     # - forbidigo
     - forcetypeassert
     - funlen
