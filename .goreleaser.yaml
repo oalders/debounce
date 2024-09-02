@@ -1,4 +1,4 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
+---
 # Make sure to check the documentation at https://goreleaser.com
 
 # The lines below are called `modelines`. See `:help modeline`
@@ -56,30 +56,30 @@ archives:
 
 nfpms:
   -
-    id: 'is'
-    package_name: is
+    id: 'debounce'
+    package_name: debounce
     builds:
-      - 'is'
+      - 'debounce'
     vendor: 'Olaf Alders'
     homepage: 'https://www.olafalders.com/'
     maintainer: 'Olaf Alders <https://github.com/oalders>'
-    description: 'is tells you what is available in your environment'
+    description: 'Limit the rate at which a command can fire'
     license: 'Apache 2.0 or MIT'
     provides:
-      - is
+      - debounce
     formats:
       - 'deb'
       - 'rpm'
     bindir: '/usr/bin'
     contents:
       - src: 'CHANGELOG.md'
-        dst: '/usr/share/doc/is/CHANGELOG.md'
+        dst: '/usr/share/doc/debounce/CHANGELOG.md'
       - src: 'LICENSE-APACHE'
-        dst: '/usr/share/doc/is/LICENSE-APACHE'
+        dst: '/usr/share/doc/debounce/LICENSE-APACHE'
       - src: 'LICENSE-MIT'
-        dst: '/usr/share/doc/is/LICENSE-MIT'
+        dst: '/usr/share/doc/debounce/LICENSE-MIT'
       - src: 'README.md'
-        dst: '/usr/share/doc/is/README.md'
+        dst: '/usr/share/doc/debounce/README.md'
 
 changelog:
   sort: asc
