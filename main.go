@@ -10,12 +10,14 @@ import (
 	"github.com/oalders/debounce/types"
 )
 
+const vstring = "0.1.0"
+
 func main() {
 	debug := flag.Bool("debug", false, "Print debugging info to screen")
 	version := flag.Bool("version", false, "Print version to screen")
 	flag.Parse()
 	if *version {
-		fmt.Println("debounce 0.1.0")
+		fmt.Printf("debounce %s\n", vstring)
 		os.Exit(0)
 	}
 
