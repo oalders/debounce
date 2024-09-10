@@ -1,6 +1,8 @@
 package run
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"os"
@@ -19,7 +21,7 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 
 	prettyName := strings.Join(args.Command, " ")
 
-	cmdName := GenerateCmdName(args.Command)
+	cmdAsFilename := GenerateCacheFileName(prettyName)
 
 	cacheDir := filepath.Join(".cache", "debounce")
 	err := MaybeMakeCacheDir(home, cacheDir)
@@ -27,12 +29,12 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 		return false, []byte{}, err
 	}
 
-	fileName := filepath.Join(home, cacheDir, cmdName)
+	filename := filepath.Join(home, cacheDir, cmdAsFilename)
 	if args.Debug {
-		fmt.Printf("Looking for debounce file \"%s\"\n", fileName)
+		fmt.Printf("Looking for debounce file \"%s\"\n", filename)
 	}
 
-	tooSoon, err := age.Compare(fileName, args.Quantity, args.Unit)
+	tooSoon, err := age.Compare(filename, args.Quantity, args.Unit)
 	if err != nil {
 		return false, []byte{}, errors.Join(errors.New(`checking last modified time`), err)
 	}
@@ -54,7 +56,7 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 	if err != nil {
 		return false, output, errors.Join(errors.New("run command"), err)
 	}
-	err = touch.Touch(fileName)
+	err = touch.Touch(filename)
 	if err != nil {
 		return false, output, errors.Join(errors.New("touch"), err)
 	}
@@ -73,9 +75,7 @@ func MaybeMakeCacheDir(parent, cache string) error {
 	return nil
 }
 
-func GenerateCmdName(args []string) string {
-	cmdName := strings.Join(args, "-")
-	cmdName = strings.ReplaceAll(cmdName, "/", "-")
-	cmdName = strings.ReplaceAll(cmdName, " ", "-")
-	return cmdName
+func GenerateCacheFileName(args string) string {
+	hash := sha256.Sum256([]byte(args))
+	return hex.EncodeToString(hash[:])
 }

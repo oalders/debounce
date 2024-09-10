@@ -63,36 +63,11 @@ func TestEnsureDir(t *testing.T) {
 	assert.NoError(t, err, "command is idempotent")
 }
 
-func TestGenerateCmdName(t *testing.T) {
+func TestGenerateCacheFileName(t *testing.T) {
 	t.Parallel()
-	tests := []struct {
-		name string
-		want string
-		args []string
-	}{
-		{
-			name: "No special characters",
-			args: []string{"arg1", "arg2", "arg3"},
-			want: "arg1-arg2-arg3",
-		},
-		{
-			name: "Contains slash",
-			args: []string{"arg/1", "arg2", "arg3"},
-			want: "arg-1-arg2-arg3",
-		},
-		{
-			name: "Contains space",
-			args: []string{"arg 1", "arg2", "arg3"},
-			want: "arg-1-arg2-arg3",
-		},
-		{
-			name: "Contains slash and space",
-			args: []string{"arg/1", "arg 2", "arg3"},
-			want: "arg-1-arg-2-arg3",
-		},
-	}
-
-	for _, tt := range tests {
-		assert.Equal(t, tt.want, run.GenerateCmdName(tt.args))
+	expected := "46e878132d529376c3d0b2d19ca9d9ab34bf3a940a92ae484689e1a271a61e84"
+	for i := 0; i < 2; i++ {
+		actual := run.GenerateCacheFileName("arg/1 arg 2 arg3")
+		assert.Equal(t, expected, actual)
 	}
 }
