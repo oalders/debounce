@@ -3,6 +3,7 @@ package run
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -74,8 +75,5 @@ func MaybeMakeCacheDir(parent, cache string) error {
 }
 
 func GenerateCmdName(args []string) string {
-	cmdName := strings.Join(args, "-")
-	cmdName = strings.ReplaceAll(cmdName, "/", "-")
-	cmdName = strings.ReplaceAll(cmdName, " ", "-")
-	return cmdName
+	return url.QueryEscape(strings.Join(args, " "))
 }

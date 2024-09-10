@@ -73,22 +73,22 @@ func TestGenerateCmdName(t *testing.T) {
 		{
 			name: "No special characters",
 			args: []string{"arg1", "arg2", "arg3"},
-			want: "arg1-arg2-arg3",
+			want: "arg1+arg2+arg3",
 		},
 		{
 			name: "Contains slash",
 			args: []string{"arg/1", "arg2", "arg3"},
-			want: "arg-1-arg2-arg3",
+			want: "arg%2F1+arg2+arg3",
 		},
 		{
 			name: "Contains space",
 			args: []string{"arg 1", "arg2", "arg3"},
-			want: "arg-1-arg2-arg3",
+			want: "arg+1+arg2+arg3",
 		},
 		{
 			name: "Contains slash and space",
 			args: []string{"arg/1", "arg 2", "arg3"},
-			want: "arg-1-arg-2-arg3",
+			want: "arg%2F1+arg+2+arg3",
 		},
 	}
 
