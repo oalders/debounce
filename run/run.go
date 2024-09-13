@@ -1,9 +1,10 @@
 package run
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
-	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -20,7 +21,7 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 
 	prettyName := strings.Join(args.Command, " ")
 
-	cmdAsFilename := GenerateCmdName(args.Command)
+	cmdAsFilename := GenerateCacheFileName(prettyName)
 
 	cacheDir := filepath.Join(".cache", "debounce")
 	err := MaybeMakeCacheDir(home, cacheDir)
@@ -74,6 +75,7 @@ func MaybeMakeCacheDir(parent, cache string) error {
 	return nil
 }
 
-func GenerateCmdName(args []string) string {
-	return url.QueryEscape(strings.Join(args, " "))
+func GenerateCacheFileName(args string) string {
+	hash := sha256.Sum256([]byte(args))
+	return hex.EncodeToString(hash[:])
 }
