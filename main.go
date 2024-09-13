@@ -10,7 +10,7 @@ import (
 	"github.com/oalders/debounce/types"
 )
 
-const vstring = "0.1.0"
+const vstring = "0.2.0"
 
 func main() {
 	debug := flag.Bool("debug", false, "Print debugging info to screen")

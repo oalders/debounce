@@ -102,7 +102,7 @@ Choose from the following options to install `debounce`.
 1. [Download a release](https://github.com/oalders/debounce/releases)
 1. Use `go install`
   * `go install github.com/oalders/debounce@latest`
-  * `go install github.com/oalders/debounce@v0.1.0`
+  * `go install github.com/oalders/debounce@v0.2.0`
 1. Use [ubi](https://github.com/houseabsolute/ubi)
 
 ```bash

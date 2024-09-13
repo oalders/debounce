@@ -2,7 +2,7 @@
 
 @test "Check version output" {
     result="$(./bin/debounce --version)"
-    [ "$result" == "debounce 0.1.0" ]
+    [ "$result" == "debounce 0.2.0" ]
 }
 
 @test "Check error message when not enough arguments are provided" {
