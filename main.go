@@ -15,6 +15,7 @@ const vstring = "0.2.0"
 func main() {
 	debug := flag.Bool("debug", false, "Print debugging info to screen")
 	version := flag.Bool("version", false, "Print version to screen")
+	status := flag.Bool("status", false, "Print the location and age of the cache file, if it exists")
 	flag.Parse()
 	if *version {
 		fmt.Printf("debounce %s\n", vstring)
@@ -31,11 +32,26 @@ eg: debounce 5 seconds bash -c 'sleep 2 && date'`)
 		os.Exit(1)
 	}
 
+	quantity := flag.Args()[0]
+	unit := flag.Args()[1]
+	command := flag.Args()[2:]
+
+	// Normalize the unit
+	switch unit {
+	case "minutes", "minute":
+		unit = "m"
+	case "seconds", "second":
+		unit = "s"
+	case "hours", "hour":
+		unit = "h"
+	}
+
 	runContext := types.DebounceCommand{
-		Quantity: flag.Args()[0],
-		Unit:     flag.Args()[1],
-		Command:  flag.Args()[2:],
+		Quantity: quantity,
+		Unit:     unit,
+		Command:  command,
 		Debug:    *debug,
+		Status:   *status,
 	}
 
 	home, err := os.UserHomeDir()

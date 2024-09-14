@@ -11,4 +11,5 @@ type DebounceCommand struct {
 	Unit     string
 	Command  []string
 	Debug    bool
+	Status   bool
 }
