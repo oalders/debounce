@@ -22,3 +22,23 @@
     run ./bin/debounce 1 s "nonexistentcommand"
     [ "$status" -eq 1 ]
 }
+
+@test "Check --status flag with and without cache file" {
+    random_number=$(perl -e 'print time')
+    command="echo $random_number"
+
+    run ./bin/debounce --debug --status 10 s bash -c "$command"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Cache file does not exist. Command will run on next debounce"* ]]
+
+    run ./bin/debounce --debug 10 s bash -c "$command"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"$random_number"* ]]
+
+    run ./bin/debounce --debug --status 10 s bash -c "$command"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"📁 cache location:"* ]]
+    [[ "$output" == *"🚧 cache last modified:"* ]]
+    [[ "$output" == *"⏲️ debounce interval:"* ]]
+    [[ "$output" == *"🕰️ cache age:"* ]]
+}

@@ -107,7 +107,7 @@ func HandleStatus(
 	fileInfo, err := os.Stat(filename)
 	if os.IsNotExist(err) {
 		fmt.Println("Cache file does not exist. Command will run on next debounce")
-		return false, []byte{}, nil
+		return true, []byte{}, nil
 	} else if err != nil {
 		return false, []byte{}, errors.Join(errors.New("stat file"), err)
 	}
@@ -126,7 +126,7 @@ func HandleStatus(
 		waitTime := -1**debounceInterval - time.Since(fileInfo.ModTime())
 		fmt.Printf("⏳ time remaining: %s\n", FormatDuration(waitTime))
 	} else {
-		fmt.Printf("🚀 \"%s\" will run on next invocation", prettyName)
+		fmt.Printf("🚀 \"%s\" will run on next invocation\n", prettyName)
 	}
 	return true, []byte{}, nil
 }

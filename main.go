@@ -15,7 +15,7 @@ const vstring = "0.2.0"
 func main() {
 	debug := flag.Bool("debug", false, "Print debugging info to screen")
 	version := flag.Bool("version", false, "Print version to screen")
-	status := flag.Bool("status", false, "Print the location and age of the cache file, if it exists")
+	status := flag.Bool("status", false, "Print cache information for a command without running it")
 	flag.Parse()
 	if *version {
 		fmt.Printf("debounce %s\n", vstring)
