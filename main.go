@@ -16,6 +16,7 @@ func main() {
 	debug := flag.Bool("debug", false, "Print debugging info to screen")
 	version := flag.Bool("version", false, "Print version to screen")
 	status := flag.Bool("status", false, "Print cache information for a command without running it")
+	cacheDir := flag.String("cache-dir", "", "Override the default cache directory")
 	flag.Parse()
 	if *version {
 		fmt.Printf("debounce %s\n", vstring)
@@ -52,6 +53,7 @@ eg: debounce 5 seconds bash -c 'sleep 2 && date'`)
 		Command:  command,
 		Debug:    *debug,
 		Status:   *status,
+		CacheDir: *cacheDir,
 	}
 
 	home, err := os.UserHomeDir()

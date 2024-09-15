@@ -25,13 +25,21 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 
 	cmdAsFilename := GenerateCacheFileName(prettyName)
 
-	cacheDir := filepath.Join(".cache", "debounce")
-	err := MaybeMakeCacheDir(home, cacheDir)
-	if err != nil {
-		return false, []byte{}, err
+	var cacheDir string
+	if args.CacheDir != "" {
+		cacheDir = args.CacheDir
+		if _, err := os.Stat(cacheDir); os.IsNotExist(err) {
+			return false, []byte{}, fmt.Errorf("provided cache directory does not exist: %s", cacheDir)
+		}
+	} else {
+		cacheDir = filepath.Join(home, ".cache", "debounce")
+		err := MaybeMakeCacheDir(home, cacheDir)
+		if err != nil {
+			return false, []byte{}, err
+		}
 	}
 
-	filename := filepath.Join(home, cacheDir, cmdAsFilename)
+	filename := filepath.Join(cacheDir, cmdAsFilename)
 	if args.Debug {
 		fmt.Printf("Looking for debounce file \"%s\"\n", filename)
 	}
@@ -60,7 +68,7 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 	}
 	err = touch.Touch(filename)
 	if err != nil {
-		return false, output, errors.Join(errors.New("touch"), err)
+		return false, output, errors.Join(errors.New("touch "+filename), err)
 	}
 	return true, output, nil
 }
