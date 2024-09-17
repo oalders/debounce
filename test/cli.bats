@@ -52,3 +52,17 @@ trap 'rm -rf "$temp_dir"' EXIT
     [ "$status" -ne 0 ]
     [[ "$output" == *"provided cache directory does not exist"* ]]
 }
+
+@test "Check invalid unit error message" {
+    run ./bin/debounce 1 invalid_unit echo "test"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"unit \"invalid_unit\" is invalid"* ]]
+    [[ "$output" == *"Usage: debounce <integer> <hours|minutes|seconds> <command>"* ]]
+}
+
+@test "Check invalid quantity error message" {
+    run ./bin/debounce invalid_quantity s echo "test"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"quantity invalid_quantity is not a valid integer"* ]]
+    [[ "$output" == *"Usage: debounce <integer> <hours|minutes|seconds> <command>"* ]]
+}
