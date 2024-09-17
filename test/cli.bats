@@ -45,3 +45,10 @@ trap 'rm -rf "$temp_dir"' EXIT
     [[ "$output" == *"⏲️ debounce interval:"* ]]
     [[ "$output" == *"🕰️ cache age:"* ]]
 }
+
+@test "Check non-existent cache directory" {
+    non_existent_dir="$temp_dir/non_existent"
+    run ./bin/debounce --cache-dir "$non_existent_dir" 1 s bash -c 'echo test'
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"provided cache directory does not exist"* ]]
+}
