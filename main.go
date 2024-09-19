@@ -1,28 +1,49 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
 
+	"github.com/alecthomas/kong"
 	"github.com/oalders/debounce/run"
 	"github.com/oalders/debounce/types"
 )
 
 const vstring = "0.2.0"
 
+type CLI struct { //nolint:govet
+	Debug    bool             `help:"Print debugging info to screen"`
+	Version  kong.VersionFlag `help:"Print version to screen"`
+	Status   bool             `help:"Print cache information for a command without running it"`
+	CacheDir string           `help:"Override the default cache directory"`
+	Quantity string           `arg:"" help:"Quantity of time"`
+	Unit     string           `arg:"" required:"" enum:"s,second,seconds,m,minute,minutes,h,hour,hours" help:"s,second,seconds,m,minute,minutes,h,hour,hours"` //nolint:lll
+	Command  []string         `arg:"" help:"Command to run" passthrough:""`
+}
+
 func main() {
-	quantity, unit, command, debug, status, cacheDir := parseAndValidateFlags()
+	var cli CLI
+	parser := kong.Must(&cli,
+		kong.Name("debounce"),
+		kong.Description("limit the rate at which a command can fire"),
+		kong.UsageOnError(),
+		kong.Vars{"version": vstring},
+	)
+
+	ctx, err := parser.Parse(os.Args[1:])
+	parser.FatalIfErrorf(err)
+
+	validateArgs(ctx, cli)
 
 	runContext := types.DebounceCommand{
-		Quantity: quantity,
-		Unit:     unit,
-		Command:  command,
-		Debug:    debug,
-		Status:   status,
-		CacheDir: cacheDir,
+		Quantity: cli.Quantity,
+		Unit:     normalizeUnit(cli.Unit),
+		Command:  cli.Command,
+		Debug:    cli.Debug,
+		Status:   cli.Status,
+		CacheDir: cli.CacheDir,
 	}
 
 	home, err := os.UserHomeDir()
@@ -32,9 +53,7 @@ func main() {
 	success, output, err := run.Run(&runContext, home)
 	fmt.Print(string(output))
 	if err != nil {
-		fmt.Println("there was an error")
-		fmt.Println(err)
-		os.Exit(1)
+		handleError(ctx, err)
 	}
 
 	if success {
@@ -43,54 +62,27 @@ func main() {
 	os.Exit(1)
 }
 
-func parseAndValidateFlags() (string, string, []string, bool, bool, string) {
-	debug := flag.Bool("debug", false, "Print debugging info to screen")
-	version := flag.Bool("version", false, "Print version to screen")
-	status := flag.Bool("status", false, "Print cache information for a command without running it")
-	cacheDir := flag.String("cache-dir", "", "Override the default cache directory")
-	flag.Parse()
-	if *version {
-		fmt.Printf("debounce %s\n", vstring)
-		os.Exit(0)
+func validateArgs(ctx *kong.Context, cli CLI) {
+	if _, err := strconv.Atoi(cli.Quantity); err != nil {
+		handleError(ctx, fmt.Errorf("quantity %s is not a valid integer", cli.Quantity))
 	}
-
-	args := os.Args[1:]
-
-	if len(args) < 3 {
-		printUsage()
-		os.Exit(1)
-	}
-
-	quantity := flag.Args()[0]
-	unit := flag.Args()[1]
-	command := flag.Args()[2:]
-
-	if _, err := strconv.Atoi(quantity); err != nil {
-		fmt.Printf("quantity %s is not a valid integer\n", quantity)
-		printUsage()
-		os.Exit(1)
-	}
-
-	switch unit {
-	case "minutes", "minute", "m":
-		unit = "m"
-	case "seconds", "second", "s":
-		unit = "s"
-	case "hours", "hour", "h":
-		unit = "h"
-	default:
-		fmt.Printf("unit \"%s\" is invalid. Valid units are: hour(s), minute(s) and second(s)\n", unit)
-		fmt.Println("You may also use the shorthand forms: h, m and s")
-		printUsage()
-		os.Exit(1)
-	}
-
-	return quantity, unit, command, *debug, *status, *cacheDir
 }
 
-func printUsage() {
-	fmt.Println(`Usage: debounce <integer> <hours|minutes|seconds> <command>
-eg: debounce 2 hours date
-eg: debounce 10 minutes zsh -c 'echo $PWD'
-eg: debounce 5 seconds bash -c 'sleep 2 && date'`)
+func normalizeUnit(unit string) string {
+	switch unit {
+	case "minutes", "minute", "m":
+		return "m"
+	case "seconds", "second", "s":
+		return "s"
+	case "hours", "hour", "h":
+		return "h"
+	default:
+		return unit
+	}
+}
+
+func handleError(ctx *kong.Context, err error) {
+	fmt.Printf("💥 %s\n", err)
+	_ = ctx.PrintUsage(false)
+	os.Exit(1)
 }

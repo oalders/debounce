@@ -17,7 +17,7 @@ import (
 	is_age "github.com/oalders/is/age"
 )
 
-func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
+func Run(args *types.DebounceCommand, home string) (bool, []byte, error) { //nolint:cyclop
 	command := args.Command[0]
 	arguments := args.Command[1:]
 
@@ -59,7 +59,9 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 
 	// This is just like running any other user command, so assume user has
 	// already sanitized inputs.
-	fmt.Printf("Running command: %s %s\n", command, strings.Join(arguments, " "))
+	if args.Debug {
+		fmt.Printf("🚀 Running command: %s %s\n", command, strings.Join(arguments, " "))
+	}
 	cmd := exec.Command(command, arguments...)
 
 	output, err := cmd.CombinedOutput()

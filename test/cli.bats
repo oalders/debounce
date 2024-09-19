@@ -5,13 +5,13 @@ trap 'rm -rf "$temp_dir"' EXIT
 
 @test "Check version output" {
     result="$(./bin/debounce --version)"
-    [ "$result" == "debounce 0.2.0" ]
+    [ "$result" == "0.2.0" ]
 }
 
 @test "Check error message when not enough arguments are provided" {
     run ./bin/debounce
     [ "$status" -eq 1 ]
-    [[ "$output" == "Usage: debounce <integer> <hours|minutes|seconds> <command>"* ]]
+    [[ "$output" == "Usage: debounce <quantity> <unit> <command>"* ]]
 }
 
 @test "Check success exit code" {
@@ -56,13 +56,13 @@ trap 'rm -rf "$temp_dir"' EXIT
 @test "Check invalid unit error message" {
     run ./bin/debounce 1 invalid_unit echo "test"
     [ "$status" -eq 1 ]
-    [[ "$output" == *"unit \"invalid_unit\" is invalid"* ]]
-    [[ "$output" == *"Usage: debounce <integer> <hours|minutes|seconds> <command>"* ]]
+    [[ "$output" == *"<unit> must be one of "* ]]
+    [[ "$output" == "Usage: debounce <quantity> <unit> <command>"* ]]
 }
 
 @test "Check invalid quantity error message" {
     run ./bin/debounce invalid_quantity s echo "test"
     [ "$status" -eq 1 ]
     [[ "$output" == *"quantity invalid_quantity is not a valid integer"* ]]
-    [[ "$output" == *"Usage: debounce <integer> <hours|minutes|seconds> <command>"* ]]
+    [[ "$output" == *"Usage: debounce <quantity> <unit> <command>"* ]]
 }
