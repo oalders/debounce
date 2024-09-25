@@ -6,23 +6,23 @@
 
 <!-- vim-markdown-toc GFM -->
 
-* [Introduction](#introduction)
-* [Installation](#installation)
-  * [Go Install](#go-install)
-  * [Using Ubi](#using-ubi)
-  * [Download a Release](#download-a-release)
-* [Examples](#examples)
-  * [A command without arguments](#a-command-without-arguments)
-  * [A command with arguments](#a-command-with-arguments)
-  * [Using Shell Variables](#using-shell-variables)
-  * [More Complex Commands](#more-complex-commands)
-* [Available Flags](#available-flags)
-  * [--cache-dir](#--cache-dir)
-  * [--status](#--status)
-    * [Resetting the Cache](#resetting-the-cache)
-  * [--version](#--version)
-  * [--help](#--help)
-* [Caveats](#caveats)
+- [Introduction](#introduction)
+- [Installation](#installation)
+  - [Go Install](#go-install)
+  - [Using Ubi](#using-ubi)
+  - [Download a Release](#download-a-release)
+- [Examples](#examples)
+  - [A command without arguments](#a-command-without-arguments)
+  - [A command with arguments](#a-command-with-arguments)
+  - [Using Shell Variables](#using-shell-variables)
+  - [More Complex Commands](#more-complex-commands)
+- [Available Flags](#available-flags)
+  - [--cache-dir](#--cache-dir)
+  - [--status](#--status)
+    - [Resetting the Cache](#resetting-the-cache)
+  - [--version](#--version)
+  - [--help](#--help)
+- [Caveats](#caveats)
 
 <!-- vim-markdown-toc -->
 
@@ -41,9 +41,9 @@ debounce <integer> <unit> <command>
 
 Available units are:
 
-* seconds (s)
-* minutes (m)
-* hours (h)
+- seconds (s)
+- minutes (m)
+- hours (h)
 
 The following are equivalent:
 
