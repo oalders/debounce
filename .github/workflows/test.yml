@@ -84,6 +84,8 @@ jobs:
       - run: env | sort
       - name: mkdir
         run: mkdir -p ~/.local/bin
+      - name: npm i
+        run: npm i
       - name: Install ubi
         run: curl --silent --location https://raw.githubusercontent.com/houseabsolute/ubi/master/bootstrap/bootstrap-ubi.sh | TARGET=~/.local/bin sh
       - name: Install omegasort

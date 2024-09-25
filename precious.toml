@@ -35,7 +35,7 @@ ignore_stderr = [
 [commands.prettier]
 type = "both"
 include = "**/*.md"
-cmd = ["prettier"]
+cmd = ["npx", "prettier"]
 tidy_flags = "--write"
 ok_exit_codes = 0
 
