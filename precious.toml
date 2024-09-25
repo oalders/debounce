@@ -32,6 +32,13 @@ ignore_stderr = [
     "The .+ file is not unique",
 ]
 
+[commands.prettier]
+type = "both"
+include = "**/*.md"
+cmd = ["npx", "prettier"]
+tidy_flags = "--write"
+ok_exit_codes = 0
+
 # [commands.ppath]
 # type = "lint"
 # exclude = [

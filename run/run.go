@@ -9,13 +9,15 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/oalders/debounce/age"
 	"github.com/oalders/debounce/touch"
 	"github.com/oalders/debounce/types"
+	is_age "github.com/oalders/is/age"
 )
 
-func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
+func Run(args *types.DebounceCommand, home string) (bool, []byte, error) { //nolint:cyclop
 	command := args.Command[0]
 	arguments := args.Command[1:]
 
@@ -23,13 +25,21 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 
 	cmdAsFilename := GenerateCacheFileName(prettyName)
 
-	cacheDir := filepath.Join(".cache", "debounce")
-	err := MaybeMakeCacheDir(home, cacheDir)
-	if err != nil {
-		return false, []byte{}, err
+	var cacheDir string
+	if args.CacheDir != "" {
+		cacheDir = args.CacheDir
+		if _, err := os.Stat(cacheDir); os.IsNotExist(err) {
+			return false, []byte{}, fmt.Errorf("provided cache directory does not exist: %s", cacheDir)
+		}
+	} else {
+		cacheDir = filepath.Join(home, ".cache", "debounce")
+		err := MaybeMakeCacheDir(home, cacheDir)
+		if err != nil {
+			return false, []byte{}, err
+		}
 	}
 
-	filename := filepath.Join(home, cacheDir, cmdAsFilename)
+	filename := filepath.Join(cacheDir, cmdAsFilename)
 	if args.Debug {
 		fmt.Printf("Looking for debounce file \"%s\"\n", filename)
 	}
@@ -38,18 +48,20 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 	if err != nil {
 		return false, []byte{}, errors.Join(errors.New(`checking last modified time`), err)
 	}
+	if args.Status {
+		return HandleStatus(args, filename, tooSoon, prettyName)
+	}
+
 	if tooSoon {
-		fmt.Printf(
-			"🚥 will not run \"%s\" more than once every %s %s\n",
-			prettyName,
-			args.Quantity,
-			args.Unit,
-		)
+		TooSoon(args, prettyName)
 		return true, []byte{}, nil
 	}
+
 	// This is just like running any other user command, so assume user has
 	// already sanitized inputs.
-	fmt.Printf("Running command: %s %s\n", command, strings.Join(arguments, " "))
+	if args.Debug {
+		fmt.Printf("🚀 Running command: %s %s\n", command, strings.Join(arguments, " "))
+	}
 	cmd := exec.Command(command, arguments...)
 
 	output, err := cmd.CombinedOutput()
@@ -58,7 +70,7 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) {
 	}
 	err = touch.Touch(filename)
 	if err != nil {
-		return false, output, errors.Join(errors.New("touch"), err)
+		return false, output, errors.Join(errors.New("touch "+filename), err)
 	}
 	return true, output, nil
 }
@@ -78,4 +90,53 @@ func MaybeMakeCacheDir(parent, cache string) error {
 func GenerateCacheFileName(args string) string {
 	hash := sha256.Sum256([]byte(args))
 	return hex.EncodeToString(hash[:])
+}
+
+func TooSoon(args *types.DebounceCommand, cmd string) {
+	fmt.Printf(
+		"🚥 will not run \"%s\" more than once every %s %s\n",
+		cmd,
+		args.Quantity,
+		args.Unit,
+	)
+}
+
+func FormatDuration(d time.Duration) string {
+	hours := int(d.Hours())
+	minutes := int(d.Minutes()) % 60
+	seconds := int(d.Seconds()) % 60
+	return fmt.Sprintf("%02d:%02d:%02d", hours, minutes, seconds)
+}
+
+func HandleStatus(
+	args *types.DebounceCommand,
+	filename string,
+	tooSoon bool,
+	prettyName string,
+) (bool, []byte, error) {
+	fileInfo, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		fmt.Printf("Cache file does not exist. \"%s\" will run on next debounce\n", prettyName)
+		return true, []byte{}, nil
+	} else if err != nil {
+		return false, []byte{}, errors.Join(errors.New("stat file"), err)
+	}
+
+	fileAge := time.Since(fileInfo.ModTime())
+	debounceInterval, err := is_age.StringToDuration(args.Quantity, args.Unit)
+	if err != nil {
+		return false, []byte{}, err
+	}
+
+	fmt.Printf("📁 cache location: %s\n", filename)
+	fmt.Printf("🚧 cache last modified: %s\n", fileInfo.ModTime().Format(time.RFC1123))
+	fmt.Printf("⏲️ debounce interval: %s\n", FormatDuration(debounceInterval.Abs()))
+	fmt.Printf("🕰️ cache age: %s\n", FormatDuration(fileAge))
+	if tooSoon {
+		waitTime := -1**debounceInterval - time.Since(fileInfo.ModTime())
+		fmt.Printf("⏳ time remaining: %s\n", FormatDuration(waitTime))
+	} else {
+		fmt.Printf("🚀 \"%s\" will run on next invocation\n", prettyName)
+	}
+	return true, []byte{}, nil
 }

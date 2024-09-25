@@ -107,10 +107,10 @@ linters-settings:
     line-length: 100
   wrapcheck:
     ignorePackageGlobs:
-    - github.com/oalders/is/*
+      - github.com/oalders/is/*
 issues:
   exclude-rules:
     # disable funlen for test funcs
-    - source: "^func Test"
+    - source: '^func Test'
       linters:
         - funlen

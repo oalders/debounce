@@ -9,6 +9,8 @@ type Context struct {
 type DebounceCommand struct {
 	Quantity string
 	Unit     string
+	CacheDir string
 	Command  []string
 	Debug    bool
+	Status   bool
 }

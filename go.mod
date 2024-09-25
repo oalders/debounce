@@ -3,6 +3,7 @@ module github.com/oalders/debounce
 go 1.20
 
 require (
+	github.com/alecthomas/kong v1.2.1
 	github.com/oalders/is v0.5.4-0.20240716215244-33e0acf2ac19
 	github.com/stretchr/testify v1.9.0
 )
