@@ -5,7 +5,7 @@ trap 'rm -rf "$temp_dir"' EXIT
 
 @test "Check version output" {
     result="$(./bin/debounce --version)"
-    [ "$result" == "0.2.0" ]
+    [ "$result" == "0.3.0" ]
 }
 
 @test "Check error message when not enough arguments are provided" {
