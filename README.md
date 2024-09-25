@@ -29,9 +29,6 @@
 ## Introduction
 
 `debounce` is a simple utility to limit the rate at which a command can fire.
-This is useful in scenarios where you want to avoid repetitive command
-executions, like in automation scripts, cron jobs, or continuous integration
-pipelines.
 
 The command format is:
 
