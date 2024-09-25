@@ -35,7 +35,7 @@ func main() {
 	ctx, err := parser.Parse(os.Args[1:])
 	parser.FatalIfErrorf(err)
 
-	validateArgs(ctx, cli)
+	validateArgs(ctx, &cli)
 
 	runContext := types.DebounceCommand{
 		Quantity: cli.Quantity,
@@ -62,9 +62,15 @@ func main() {
 	os.Exit(1)
 }
 
-func validateArgs(ctx *kong.Context, cli CLI) {
+func validateArgs(ctx *kong.Context, cli *CLI) {
 	if _, err := strconv.Atoi(cli.Quantity); err != nil {
 		handleError(ctx, fmt.Errorf("quantity %s is not a valid integer", cli.Quantity))
+	}
+	if len(cli.Command) > 0 && cli.Command[0] == "--" {
+		cli.Command = cli.Command[1:]
+		if len(cli.Command) == 0 {
+			handleError(ctx, fmt.Errorf("command is missing"))
+		}
 	}
 }
 

@@ -116,7 +116,7 @@ func HandleStatus(
 ) (bool, []byte, error) {
 	fileInfo, err := os.Stat(filename)
 	if os.IsNotExist(err) {
-		fmt.Println("Cache file does not exist. Command will run on next debounce")
+		fmt.Printf("Cache file does not exist. \"%s\" will run on next debounce\n", prettyName)
 		return true, []byte{}, nil
 	} else if err != nil {
 		return false, []byte{}, errors.Join(errors.New("stat file"), err)

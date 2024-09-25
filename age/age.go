@@ -15,7 +15,7 @@ func Compare(path, ageValue, ageUnit string) (bool, error) {
 		if os.IsNotExist(err) {
 			return false, nil
 		}
-		return false, errors.Join(errors.New("could not stat command"), err)
+		return false, errors.Join(errors.New("could not stat cache file"), err)
 	}
 
 	dur, err := age.StringToDuration(ageValue, ageUnit)

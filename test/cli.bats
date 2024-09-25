@@ -32,7 +32,7 @@ trap 'rm -rf "$temp_dir"' EXIT
 
     run ./bin/debounce --debug --cache-dir "$temp_dir" --status 10 s bash -c "$command"
     [ "$status" -eq 0 ]
-    [[ "$output" == *"Cache file does not exist. Command will run on next debounce"* ]]
+    [[ "$output" == *"Cache file does not exist. \"bash -c $command\" will run on next debounce"* ]]
 
     run ./bin/debounce --debug --cache-dir "$temp_dir" 10 s bash -c "$command"
     [ "$status" -eq 0 ]
