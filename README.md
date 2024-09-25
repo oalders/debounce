@@ -183,7 +183,7 @@ debounce --debug 90 s -- curl https://www.prettygoodping.com
 Specify an alternate cache directory to use. The directory must already exist.
 
 ```bash
-./bin/debounce --cache-dir /tmp 30 s date
+debounce --cache-dir /tmp 30 s date
 ```
 
 ### --status
@@ -213,7 +213,7 @@ rm /Users/olaf/.cache/debounce/0e87632cd46bd4907c516317eb6d81fe0f921a23c7643018f
 Prints current version.
 
 ```bash
-./bin/debounce --version
+debounce --version
 0.3.0
 ```
 
@@ -222,7 +222,7 @@ Prints current version.
 Displays usage instructions.
 
 ```text
-./bin/debounce --help
+debounce --help
 Usage: debounce <quantity> <unit> <command> ... [flags]
 
 limit the rate at which a command can fire
