@@ -1,6 +1,9 @@
 ---
 name: test
 
+env:
+  GITHUB_TOKEN: ${{ github.token }}
+
 on:
   pull_request:
   push:
