@@ -87,7 +87,7 @@ go install github.com/oalders/debounce@latest
 or for a specific version:
 
 ```bash
-go install github.com/oalders/debounce@v0.4.0
+go install github.com/oalders/debounce@v0.5.0
 ```
 
 ### Using Ubi
@@ -263,7 +263,7 @@ Prints current version.
 
 ```bash
 debounce --version
-0.4.0
+0.5.0
 ```
 
 ### --help

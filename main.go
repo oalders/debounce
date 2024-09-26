@@ -11,7 +11,7 @@ import (
 	"github.com/oalders/debounce/types"
 )
 
-const vstring = "0.4.0"
+const vstring = "0.5.0"
 
 type CLI struct { //nolint:govet
 	Debug    bool             `help:"Print debugging info to screen"`

@@ -1,5 +1,9 @@
 # Changes
 
+## 0.5.0 2024-09-26
+
+- Add --local flag
+
 ## 0.4.0 - 2024-09-26
 
 - Add days/day/d to available units of time
