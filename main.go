@@ -19,7 +19,7 @@ type CLI struct { //nolint:govet
 	Status   bool             `help:"Print cache information for a command without running it"`
 	CacheDir string           `help:"Override the default cache directory"`
 	Quantity string           `arg:"" help:"Quantity of time"`
-	Unit     string           `arg:"" required:"" enum:"s,second,seconds,m,minute,minutes,h,hour,hours" help:"s,second,seconds,m,minute,minutes,h,hour,hours"` //nolint:lll
+	Unit     string           `arg:"" required:"" enum:"s,second,seconds,m,minute,minutes,h,hour,hours,d,day,days" help:"s,second,seconds,m,minute,minutes,h,hour,hours,d,day,days"` //nolint:lll
 	Command  []string         `arg:"" help:"Command to run" passthrough:""`
 }
 
@@ -82,6 +82,8 @@ func normalizeUnit(unit string) string {
 		return "s"
 	case "hours", "hour", "h":
 		return "h"
+	case "days", "day", "d":
+		return "d"
 	default:
 		return unit
 	}
