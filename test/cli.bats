@@ -66,3 +66,11 @@ trap 'rm -rf "$temp_dir"' EXIT
     [[ "$output" == *"quantity invalid_quantity is not a valid integer"* ]]
     [[ "$output" == *"Usage: debounce <quantity> <unit> <command>"* ]]
 }
+
+@test "Check all available units" {
+    units=("s" "second" "seconds" "m" "minute" "minutes" "h" "hour" "hours" "d" "day" "days")
+    for unit in "${units[@]}"; do
+        run ./bin/debounce --cache-dir "$temp_dir" 1 "$unit" bash -c 'echo test'
+        [ "$status" -eq 0 ]
+    done
+}

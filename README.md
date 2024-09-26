@@ -41,26 +41,36 @@ Available units are:
 - seconds (s)
 - minutes (m)
 - hours (h)
+- days (d)
 
 The following are equivalent:
 
 ```bash
-debounce 1 s date
-debounce 1 second date
-debounce 1 seconds date
+debounce 1 s some-command
+debounce 1 second some-command
+debounce 1 seconds some-command
 ```
 
 ```bash
-debounce 1 m date
-debounce 1 minute date
-debounce 1 minutes date
+debounce 1 m some-command
+debounce 1 minute some-command
+debounce 1 minutes some-command
 ```
 
 ```bash
-debounce 1 h date
-debounce 1 hour date
-debounce 1 hours date
+debounce 1 h some-command
+debounce 1 hour some-command
+debounce 1 hours some-command
 ```
+
+```bash
+debounce 1 d some-command
+debounce 1 day some-command
+debounce 1 days some-command
+```
+
+Note that `day` is shorthand for `24 hours`. Daylight Saving Time is not taken
+into account.
 
 ## Installation
 
@@ -226,7 +236,7 @@ limit the rate at which a command can fire
 
 Arguments:
   <quantity>       Quantity of time
-  <unit>           s,second,seconds,m,minute,minutes,h,hour,hours
+  <unit>           s,second,seconds,m,minute,minutes,h,hour,hours,d,day,days
   <command> ...    Command to run
 
 Flags:
