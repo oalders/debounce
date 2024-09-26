@@ -54,7 +54,8 @@ func TestGenerateCacheFileName(t *testing.T) {
 	t.Parallel()
 	expected := "46e878132d529376c3d0b2d19ca9d9ab34bf3a940a92ae484689e1a271a61e84"
 	for i := 0; i < 2; i++ {
-		actual := run.GenerateCacheFileName("arg/1 arg 2 arg3")
+		actual, err := run.GenerateCacheFileName("arg/1 arg 2 arg3", false)
+		assert.NoError(t, err)
 		assert.Equal(t, expected, actual)
 	}
 }

@@ -12,5 +12,6 @@ type DebounceCommand struct {
 	CacheDir string
 	Command  []string
 	Debug    bool
+	Local    bool
 	Status   bool
 }

@@ -23,7 +23,10 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) { //nol
 
 	prettyName := strings.Join(args.Command, " ")
 
-	cmdAsFilename := GenerateCacheFileName(prettyName)
+	cmdAsFilename, err := GenerateCacheFileName(prettyName, args.Local)
+	if err != nil {
+		return false, []byte{}, err
+	}
 
 	var cacheDir string
 	if args.CacheDir != "" {
@@ -87,9 +90,16 @@ func MaybeMakeCacheDir(parent, cache string) error {
 	return nil
 }
 
-func GenerateCacheFileName(args string) string {
+func GenerateCacheFileName(args string, local bool) (string, error) {
+	if local {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return "", errors.Join(errors.New("get current working directory"), err)
+		}
+		args = cwd + " " + args
+	}
 	hash := sha256.Sum256([]byte(args))
-	return hex.EncodeToString(hash[:])
+	return hex.EncodeToString(hash[:]), nil
 }
 
 func TooSoon(args *types.DebounceCommand, cmd string) {
@@ -115,6 +125,13 @@ func HandleStatus(
 	prettyName string,
 ) (bool, []byte, error) {
 	fileInfo, err := os.Stat(filename)
+	if args.Local {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return false, []byte{}, errors.Join(errors.New("get current working directory"), err)
+		}
+		fmt.Printf("🏘️ command localized to %s\n", cwd)
+	}
 	if os.IsNotExist(err) {
 		fmt.Printf("Cache file does not exist. \"%s\" will run on next debounce\n", prettyName)
 		return true, []byte{}, nil

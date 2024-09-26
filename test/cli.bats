@@ -74,3 +74,25 @@ trap 'rm -rf "$temp_dir"' EXIT
         [ "$status" -eq 0 ]
     done
 }
+
+@test "Check --local flag behavior" {
+    command="echo local_test"
+
+    # Run the command twice without the --local flag
+    run ./bin/debounce --cache-dir "$temp_dir" 10 s bash -c "$command"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"local_test"* ]]
+
+    run ./bin/debounce --cache-dir "$temp_dir" 10 s bash -c "$command"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"🚥 will not run"* ]]
+
+    # Run the command twice with the --local flag
+    run ./bin/debounce --cache-dir "$temp_dir" --local 10 s bash -c "$command"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"local_test"* ]]
+
+    run ./bin/debounce --cache-dir "$temp_dir" --local 10 s bash -c "$command"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"🚥 will not run"* ]]
+}

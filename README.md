@@ -18,6 +18,8 @@
   - [More Complex Commands](#more-complex-commands)
 - [Available Flags](#available-flags)
   - [--cache-dir](#--cache-dir)
+  - [--local](#--local)
+    - [Example Usage](#example-usage)
   - [--status](#--status)
     - [Resetting the Cache](#resetting-the-cache)
   - [--version](#--version)
@@ -191,6 +193,46 @@ Specify an alternate cache directory to use. The directory must already exist.
 
 ```bash
 debounce --cache-dir /tmp 30 s date
+```
+
+### --local
+
+The `--local` flag modifies the behavior of `debounce` by including the full
+path to the current working directory in the cache key. This ensures that the
+cache is specific to the directory from which the command is run.
+
+By default, `debounce` works globally. It generates a cache key based on the
+command and its arguments. This means that if you run the same command from
+different directories, `debounce` will treat them as the same command and use
+the same cache file. This can be useful if you want to limit the execution of a
+command globally, regardless of the directory.
+
+With the `--local` flag, `debounce` includes the full path to the current
+working directory in the cache key. This means that the cache is specific to the
+directory from which the command is run. If you run the same command from
+different directories, `debounce` will treat them as different commands and use
+separate cache files. This is useful if you want to limit the execution of a
+command on a per-directory basis.
+
+#### Example Usage
+
+```shell
+# Run a command without the --local flag
+debounce 10 s echo "Hello, World!"
+# Run the same command again within 10 seconds
+debounce 10 s echo "Hello, World!"
+# Output: 🚥 will not run "echo Hello, World!" more than once every 10 seconds
+
+# Run a command with the --local flag
+debounce --local 10 s echo "Hello, Local World!"
+# Run the same command again within 10 seconds from the same directory
+debounce --local 10 s echo "Hello, Local World!"
+# Output: 🚥 will not run "echo Hello, Local World!" more than once every 10 seconds
+
+# Run the same command from a different directory
+cd /another/directory
+debounce --local 10 s echo "Hello, Local World!"
+# Output: Hello, Local World!
 ```
 
 ### --status
