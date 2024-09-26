@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -eux -o pipefail
+
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 0.4.0 0.5.0"
+  exit 1
+fi
+
+# Assign the arguments to find and replace values
+find_value=$1
+replace_value=$2
+
+# Hardcoded list of files
+files=("main.go" "README.md" "test/cli.bats")
+
+# Iterate over the list of files and run the perl command
+for file in "${files[@]}"; do
+  perl -pi -E "s/$find_value/$replace_value/" "$file"
+done
