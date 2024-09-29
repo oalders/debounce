@@ -286,6 +286,7 @@ Flags:
       --debug               Print debugging info to screen
       --version             Print version to screen
       --status              Print cache information for a command without running it
+      --local               Localize debounce to current working directory
       --cache-dir=STRING    Override the default cache directory
 ```
 
