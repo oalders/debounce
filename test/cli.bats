@@ -5,7 +5,7 @@ trap 'rm -rf "$temp_dir"' EXIT
 
 @test "Check version output" {
     result="$(./bin/debounce --version)"
-    [ "$result" == "0.4.0" ]
+    [ "$result" == "0.5.0" ]
 }
 
 @test "Check error message when not enough arguments are provided" {
@@ -73,4 +73,26 @@ trap 'rm -rf "$temp_dir"' EXIT
         run ./bin/debounce --cache-dir "$temp_dir" 1 "$unit" bash -c 'echo test'
         [ "$status" -eq 0 ]
     done
+}
+
+@test "Check --local flag behavior" {
+    command="echo local_test"
+
+    # Run the command twice without the --local flag
+    run ./bin/debounce --cache-dir "$temp_dir" 10 s bash -c "$command"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"local_test"* ]]
+
+    run ./bin/debounce --cache-dir "$temp_dir" 10 s bash -c "$command"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"🚥 will not run"* ]]
+
+    # Run the command twice with the --local flag
+    run ./bin/debounce --cache-dir "$temp_dir" --local 10 s bash -c "$command"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"local_test"* ]]
+
+    run ./bin/debounce --cache-dir "$temp_dir" --local 10 s bash -c "$command"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"🚥 will not run"* ]]
 }

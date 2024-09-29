@@ -11,12 +11,13 @@ import (
 	"github.com/oalders/debounce/types"
 )
 
-const vstring = "0.4.0"
+const vstring = "0.5.0"
 
 type CLI struct { //nolint:govet
 	Debug    bool             `help:"Print debugging info to screen"`
 	Version  kong.VersionFlag `help:"Print version to screen"`
 	Status   bool             `help:"Print cache information for a command without running it"`
+	Local    bool             `help:"Localize debounce to current working directory"`
 	CacheDir string           `help:"Override the default cache directory"`
 	Quantity string           `arg:"" help:"Quantity of time"`
 	Unit     string           `arg:"" required:"" enum:"s,second,seconds,m,minute,minutes,h,hour,hours,d,day,days" help:"s,second,seconds,m,minute,minutes,h,hour,hours,d,day,days"` //nolint:lll
@@ -42,6 +43,7 @@ func main() {
 		Unit:     normalizeUnit(cli.Unit),
 		Command:  cli.Command,
 		Debug:    cli.Debug,
+		Local:    cli.Local,
 		Status:   cli.Status,
 		CacheDir: cli.CacheDir,
 	}
