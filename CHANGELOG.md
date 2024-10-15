@@ -1,6 +1,6 @@
 # Changes
 
-## 0.5.1 2024-10-09
+## 0.5.1 2024-10-15
 
 - Don't print usage message when a command exits non-zero
 
