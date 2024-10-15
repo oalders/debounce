@@ -55,7 +55,8 @@ func main() {
 	success, output, err := run.Run(&runContext, home)
 	fmt.Print(string(output))
 	if err != nil {
-		handleError(ctx, err)
+		fmt.Printf("💥 %s\n", err)
+		os.Exit(1)
 	}
 
 	if success {

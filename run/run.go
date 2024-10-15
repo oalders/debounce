@@ -69,7 +69,10 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) { //nol
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return false, output, errors.Join(errors.New("run command"), err)
+		return false, output, errors.Join(
+			fmt.Errorf("running command: %s %s", command, strings.Join(arguments, " ")),
+			err,
+		)
 	}
 	err = touch.Touch(filename)
 	if err != nil {
