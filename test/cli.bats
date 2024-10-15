@@ -3,6 +3,8 @@
 temp_dir=$(mktemp -d)
 trap 'rm -rf "$temp_dir"' EXIT
 
+usage_message="Usage: debounce <quantity> <unit> <command>"
+
 @test "Check version output" {
     result="$(./bin/debounce --version)"
     [ "$result" == "0.5.0" ]
@@ -11,7 +13,7 @@ trap 'rm -rf "$temp_dir"' EXIT
 @test "Check error message when not enough arguments are provided" {
     run ./bin/debounce
     [ "$status" -eq 1 ]
-    [[ "$output" == "Usage: debounce <quantity> <unit> <command>"* ]]
+    [[ "$output" == "$usage_message"* ]]
 }
 
 @test "Check success exit code" {
@@ -57,14 +59,14 @@ trap 'rm -rf "$temp_dir"' EXIT
     run ./bin/debounce 1 invalid_unit echo "test"
     [ "$status" -eq 1 ]
     [[ "$output" == *"<unit> must be one of "* ]]
-    [[ "$output" == "Usage: debounce <quantity> <unit> <command>"* ]]
+    [[ "$output" == "$usage_message"* ]]
 }
 
 @test "Check invalid quantity error message" {
     run ./bin/debounce invalid_quantity s echo "test"
     [ "$status" -eq 1 ]
     [[ "$output" == *"quantity invalid_quantity is not a valid integer"* ]]
-    [[ "$output" == *"Usage: debounce <quantity> <unit> <command>"* ]]
+    [[ "$output" == *"$usage_message"* ]]
 }
 
 @test "Check all available units" {
@@ -95,4 +97,11 @@ trap 'rm -rf "$temp_dir"' EXIT
     run ./bin/debounce --cache-dir "$temp_dir" --local 10 s bash -c "$command"
     [ "$status" -eq 0 ]
     [[ "$output" == *"🚥 will not run"* ]]
+}
+
+@test "Check command that exits with error code" {
+    run ./bin/debounce 1 s bash -c "exit 2"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"running command: bash -c exit 2"* ]]
+    [[ "$output" != *"$usage_message"* ]]
 }
