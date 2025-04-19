@@ -1,9 +1,5 @@
 # debounce
 
-<p align="center">
-  <img src="logo.jpeg" alt="debounce logo" />
-</p>
-
 <!-- vim-markdown-toc GFM -->
 
 - [Introduction](#introduction)
