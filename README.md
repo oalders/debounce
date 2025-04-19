@@ -31,6 +31,8 @@
 ## Introduction
 
 `debounce` is a simple utility to limit the rate at which a command can fire.
+I've written a blog post on [the motivation behind this
+tool](https://www.olafalders.com/2025/02/25/debounce-all-of-the-things/).
 
 The command format is:
 
