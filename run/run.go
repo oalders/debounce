@@ -1,6 +1,7 @@
 package run
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
@@ -65,7 +66,7 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) { //nol
 	if args.Debug {
 		fmt.Printf("🚀 Running command: %s %s\n", command, strings.Join(arguments, " "))
 	}
-	cmd := exec.Command(command, arguments...)
+	cmd := exec.CommandContext(context.Background(), command, arguments...)
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
