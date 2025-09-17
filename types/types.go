@@ -1,3 +1,4 @@
+//revive:disable:var-naming
 package types
 
 // Context type tracks top level debugging flag.
