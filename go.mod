@@ -1,6 +1,6 @@
 module github.com/oalders/debounce
 
-go 1.20
+go 1.24
 
 require (
 	github.com/alecthomas/kong v1.2.1
