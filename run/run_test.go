@@ -76,3 +76,35 @@ func TestRunWithNonExistentCacheDir(t *testing.T) {
 	assert.False(t, success)
 	assert.Empty(t, output)
 }
+
+func TestRunCreatesDefaultCacheDir(t *testing.T) {
+	t.Parallel()
+	// Create a temporary home directory
+	tempHome, err := os.MkdirTemp("", "test-home")
+	require.NoError(t, err)
+	defer os.RemoveAll(tempHome)
+
+	// Don't create the cache dir ahead of time - let Run create it
+	args := &types.DebounceCommand{
+		Quantity: "1",
+		Unit:     "s",
+		Command:  []string{"echo", "Hello, World!"},
+		Debug:    false,
+	}
+
+	// Run should succeed even when cache dir doesn't exist
+	success, output, err := run.Run(args, tempHome)
+	assert.NoError(t, err)
+	assert.True(t, success)
+	assert.Equal(t, string(output), "Hello, World!\n")
+
+	// Verify the cache directory was created
+	cacheDir := path.Join(tempHome, ".cache", "debounce")
+	_, err = os.Stat(cacheDir)
+	assert.NoError(t, err, "cache directory should be created")
+
+	// Verify the cache file was created
+	entries, err := os.ReadDir(cacheDir)
+	require.NoError(t, err)
+	assert.Len(t, entries, 1, "should have created one cache file")
+}

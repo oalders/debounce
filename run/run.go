@@ -37,7 +37,7 @@ func Run(args *types.DebounceCommand, home string) (bool, []byte, error) { //nol
 		}
 	} else {
 		cacheDir = filepath.Join(home, ".cache", "debounce")
-		err := MaybeMakeCacheDir(home, cacheDir)
+		err := MaybeMakeCacheDir(home, filepath.Join(".cache", "debounce"))
 		if err != nil {
 			return false, []byte{}, err
 		}
