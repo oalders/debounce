@@ -2,7 +2,7 @@ package run_test
 
 import (
 	"os"
-	"path"
+	"path/filepath"
 	"testing"
 
 	"github.com/oalders/debounce/run"
@@ -43,7 +43,7 @@ func TestEnsureDir(t *testing.T) {
 	err = run.MaybeMakeCacheDir(tempDir, dirName)
 	require.NoError(t, err, "first attempt to make dir")
 
-	_, err = os.Stat(path.Join(tempDir, dirName))
+	_, err = os.Stat(filepath.Join(tempDir, dirName))
 	require.NoError(t, err)
 
 	err = run.MaybeMakeCacheDir(tempDir, dirName)
@@ -99,7 +99,7 @@ func TestRunCreatesDefaultCacheDir(t *testing.T) {
 	assert.Equal(t, string(output), "Hello, World!\n")
 
 	// Verify the cache directory was created
-	cacheDir := path.Join(tempHome, ".cache", "debounce")
+	cacheDir := filepath.Join(tempHome, ".cache", "debounce")
 	_, err = os.Stat(cacheDir)
 	assert.NoError(t, err, "cache directory should be created")
 
