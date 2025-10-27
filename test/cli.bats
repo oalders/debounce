@@ -7,7 +7,7 @@ usage_message="Usage: debounce <quantity> <unit> <command>"
 
 @test "Check version output" {
     result="$(./bin/debounce --version)"
-    [ "$result" == "0.5.0" ]
+    [ "$result" == "0.5.2" ]
 }
 
 @test "Check error message when not enough arguments are provided" {
