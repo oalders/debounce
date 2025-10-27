@@ -1,5 +1,9 @@
 # Changes
 
+## 0.5.2 2025-10-27
+
+- Create cache dir in correct location if it does not already exist
+
 ## 0.5.1 2024-10-09
 
 - Don't print usage message when a command exits non-zero
