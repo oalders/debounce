@@ -4,9 +4,16 @@ updates:
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      # Check for updates to GitHub Actions every week
-      interval: 'weekly'
+      interval: 'monthly'
+    groups:
+      github-actions:
+        patterns:
+          - '*'
   - package-ecosystem: gomod
     directory: '/'
     schedule:
-      interval: daily
+      interval: monthly
+    groups:
+      gomod:
+        patterns:
+          - '*'
