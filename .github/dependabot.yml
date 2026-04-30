@@ -9,6 +9,8 @@ updates:
       github-actions:
         patterns:
           - '*'
+    cooldown:
+      default-days: 7
   - package-ecosystem: gomod
     directory: '/'
     schedule:
@@ -17,3 +19,5 @@ updates:
       gomod:
         patterns:
           - '*'
+    cooldown:
+      default-days: 7
