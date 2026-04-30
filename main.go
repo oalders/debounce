@@ -30,6 +30,12 @@ func main() {
 		kong.Name("debounce"),
 		kong.Description("limit the rate at which a command can fire"),
 		kong.UsageOnError(),
+		kong.Exit(func(code int) {
+			if code != 0 {
+				code = 1
+			}
+			os.Exit(code)
+		}),
 		kong.Vars{"version": vstring},
 	)
 
